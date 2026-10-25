@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Changa+One&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Changa One", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-neutral-800 bg-white;
+  }
+  h1 {
+    @apply text-5xl md:text-6xl font-display;
+  }
+  h2 {
+    @apply text-3xl font-display;
+  }
+  h3 {
+    @apply text-xl font-display;
+  }
+}
