@@ -1,6 +1,0 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    { "name": "jekyll", "runtimeExecutable": "/opt/homebrew/lib/ruby/gems/4.0.0/bin/jekyll", "runtimeArgs": ["serve", "--livereload"], "port": 4000 }
-  ]
-}
