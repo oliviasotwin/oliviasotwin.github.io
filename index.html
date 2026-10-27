@@ -1,14 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Olivia's Portfolio</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+---
+title: Home
+heading: Olivia Sotwin
+hero_image: /images/title-cards/home.svg
+hero_full: true
+---
+<section class="mx-auto max-w-6xl px-6 py-24">
+  <div class="grid gap-12 md:grid-cols-2 md:items-end">
+    <h2 class="text-4xl md:text-5xl">Hi, I'm Olivia.</h2>
+    <p class="text-lg leading-relaxed text-neutral-600">
+      Placeholder intro — a couple of sentences about what you shoot, what you love about it,
+      and what people will find on this site.
+    </p>
+  </div>
+</section>
 
-
-<body>
-  <h1 class="p-6">Testing testing 123</h1>
-</body>
-</html>
+<section class="mx-auto max-w-6xl px-6 pb-24">
+  <div class="mb-8 flex items-end justify-between">
+    <h2>Latest photos</h2>
+    <a href="{{ '/photo-gallery/' | relative_url }}" class="text-sm uppercase tracking-[0.2em] underline underline-offset-8">View all</a>
+  </div>
+  {% include gallery.html limit=3 %}
+</section>

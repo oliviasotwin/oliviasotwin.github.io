@@ -1,39 +1,9 @@
 ---
-layout: null
+title: Photo gallery
+hero_image: /images/title-cards/photo-gallery.jpeg
+theme: dark
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Look at all them photos</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <h1 class="p-24">Photo gallery</h1>
-
-  <section class="max-w-6xl mx-auto px-4 pb-12">
-    {% assign exts = ".jpg,.jpeg,.png,.webp,.gif" | split: "," %}
-    {% assign photos = site.static_files | where_exp: "f", "f.path contains '/images/gallery/'" | sort: "name" | reverse %}
-
-    {% if photos.size == 0 %}
-      <p>no fotos yet :(</p>
-    {% endif %}
-
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {% for photo in photos %}
-        {% assign ext = photo.extname | downcase %}
-        {% if exts contains ext %}
-          <a href="{{ photo.path | relative_url }}" target="_blank" class="block overflow-hidden rounded-lg">
-            <img
-              src="{{ photo.path | relative_url }}"
-              alt="{{ photo.basename | replace: '-', ' ' }}"
-              loading="lazy"
-              class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-300">
-          </a>
-        {% endif %}
-      {% endfor %}
-    </div>
-  </section>
-</body>
-</html>
+<!-- outer padding matches the gap between photos (gap-2 / md:gap-3 in gallery.html) so the spacing looks even -->
+<section class="p-2 md:p-3">
+  {% include gallery.html %}
+</section>

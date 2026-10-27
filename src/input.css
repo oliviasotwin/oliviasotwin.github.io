@@ -1,6 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Changa+One&display=swap");
 @import "tailwindcss";
 
+/* Jekyll partials live in underscore folders — tell Tailwind to scan them, and skip the built copy */
+@source "../_layouts";
+@source "../_includes";
+@source not "../_site";
+
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Changa One", system-ui, sans-serif;

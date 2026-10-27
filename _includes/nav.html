@@ -1,0 +1,45 @@
+<!--
+  Fixed, centred nav. Once you scroll (script below sets data-scrolled) it becomes a floating
+  rounded "pill" with a blurred background. group-data-scrolled:* classes only apply while the
+  <header class="group"> has that attribute.
+  - The header spans the full width, so it's pointer-events-none (clicks pass through to the page);
+    only the nav pill itself takes clicks back with pointer-events-auto.
+  - The blur lives on its own background layer, NOT on <nav>: an element with backdrop-filter
+    stops its children's backdrop-filter from seeing the page, which would break the blurred
+    phone dropdown inside it.
+-->
+<header id="site-nav" class="group pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4 text-white">
+  <nav class="pointer-events-auto relative isolate flex items-center rounded-full px-7 py-3">
+    <span aria-hidden="true" class="absolute inset-0 -z-10 rounded-full bg-neutral-950/55 opacity-0 shadow-lg ring-1 ring-white/10 backdrop-blur-md transition-opacity duration-300 group-data-scrolled:opacity-100 group-data-open:opacity-100"></span>
+
+    <button id="nav-toggle" type="button" class="md:hidden" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle menu">
+      <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+
+    <ul id="nav-links" class="absolute top-full left-1/2 mt-3 hidden w-60 -translate-x-1/2 flex-col gap-1 rounded-2xl bg-neutral-950/70 p-5 ring-1 ring-white/10 backdrop-blur-md group-data-open:flex md:static md:mt-0 md:flex md:w-auto md:translate-x-0 md:flex-row md:gap-8 md:rounded-none md:bg-transparent md:p-0 md:ring-0 md:backdrop-blur-none">
+      {% for item in site.data.navigation %}
+        {% assign active = false %}
+        {% if page.url == item.url %}{% assign active = true %}{% endif %}
+        <li>
+          <a href="{{ item.url | relative_url }}"
+             class="block py-2 text-sm uppercase tracking-[0.2em] transition-opacity md:py-0 {% if active %}opacity-100 underline decoration-2 underline-offset-6{% else %}opacity-70 hover:opacity-100{% endif %}"
+             {% if active %}aria-current="page"{% endif %}>{{ item.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  (() => {
+    const nav = document.getElementById("site-nav");
+    const toggle = document.getElementById("nav-toggle");
+    const onScroll = () => nav.toggleAttribute("data-scrolled", window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    toggle.addEventListener("click", () => {
+      const open = nav.toggleAttribute("data-open");
+      toggle.setAttribute("aria-expanded", open);
+    });
+  })();
+</script>
