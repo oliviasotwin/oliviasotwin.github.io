@@ -1,0 +1,90 @@
+{% comment %}
+  Justified gallery of everything in /images/gallery/ (newest name first).
+  Usage: include gallery.html  — or pass limit=3 to show only the first few.
+  How it works (flexbox + one CSS variable per photo):
+    - --r is the photo's aspect ratio (width / height). Jekyll can't read image sizes on
+      GitHub Pages, so the script at the bottom sets it once each photo loads (1.5 until then).
+    - each box starts at the width it would have at the target row height:
+      flex-basis = --r * --row-h  (--row-h is set on .gallery, bigger on wider screens)
+    - flex-wrap fills a row until the next photo won't fit, then wraps
+    - flex-grow = --r, so wide photos grow more than tall ones in exactly the same proportion:
+      every photo in a row ends up the same height, and aspect-ratio = --r means NOTHING is cropped
+      (rows can be a little taller or shorter than --row-h — that's the trade-off)
+    - the invisible ::after spacer (grow 10) soaks up space in the LAST row,
+      so a lone photo there doesn't get blown up to full width
+{% endcomment %}
+{% assign exts = ".jpg,.jpeg,.png,.webp,.gif" | split: "," %}
+{% assign photos = site.static_files | where_exp: "f", "f.path contains '/images/gallery/'" | sort: "name" | reverse %}
+{% assign limit = include.limit | default: photos.size %}
+
+{% if photos.size == 0 %}
+  <p class="text-center opacity-60">No photos yet — check back soon.</p>
+{% else %}
+  <div class="gallery flex flex-wrap items-start gap-2 [--row-h:14rem] md:gap-3 md:[--row-h:18rem] lg:[--row-h:20rem] after:grow-[10] after:content-['']">
+    {% assign shown = 0 %}
+    {% for photo in photos %}
+      {% assign ext = photo.extname | downcase %}
+      {% if exts contains ext and shown < limit %}
+        {% assign shown = shown | plus: 1 %}
+        {% assign caption = photo.basename | replace: '-', ' ' | replace: '_', ' ' %}
+        <a href="{{ photo.path | relative_url }}" data-caption="{{ caption }}"
+           class="group aspect-(--r) grow-(--r) basis-[calc(var(--r)*var(--row-h))] overflow-hidden bg-neutral-900 [--r:1.5]">
+          <img src="{{ photo.path | relative_url }}" alt="{{ caption }}" loading="lazy"
+               class="h-full w-full object-cover transition duration-700 group-hover:scale-[1.02] group-hover:opacity-90">
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- Lightbox: <dialog> gives us a backdrop, focus trapping and Esc-to-close for free -->
+  <dialog id="lightbox" class="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-black/90">
+    <figure class="flex flex-col items-center">
+      <img id="lightbox-img" alt="" class="max-h-[85vh] max-w-[92vw] object-contain shadow-2xl">
+      <figcaption id="lightbox-caption" class="mt-4 text-sm text-white/80"></figcaption>
+    </figure>
+    <button data-close class="fixed top-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-black/50 text-3xl text-white/80 hover:text-white" aria-label="Close">&times;</button>
+    <button data-step="-1" class="fixed top-1/2 left-3 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-3xl text-white/80 hover:text-white" aria-label="Previous">&lsaquo;</button>
+    <button data-step="1" class="fixed top-1/2 right-3 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-3xl text-white/80 hover:text-white" aria-label="Next">&rsaquo;</button>
+  </dialog>
+
+  <script>
+    (() => {
+      const links = [...document.querySelectorAll(".gallery a")];
+
+      // give each box its photo's real aspect ratio (see the comment at the top)
+      links.forEach((link) => {
+        const photo = link.querySelector("img");
+        const setRatio = () => link.style.setProperty("--r", photo.naturalWidth / photo.naturalHeight);
+        if (photo.complete && photo.naturalWidth) setRatio();
+        else photo.addEventListener("load", setRatio);
+      });
+
+      const box = document.getElementById("lightbox");
+      const img = document.getElementById("lightbox-img");
+      const cap = document.getElementById("lightbox-caption");
+      let current = 0;
+
+      const show = (i) => {
+        current = (i + links.length) % links.length; // wrap around at either end
+        img.src = links[current].href;
+        img.alt = cap.textContent = links[current].dataset.caption;
+      };
+
+      links.forEach((link, i) => link.addEventListener("click", (e) => {
+        e.preventDefault();
+        show(i);
+        box.showModal();
+      }));
+      box.querySelectorAll("[data-step]").forEach((b) =>
+        b.addEventListener("click", () => show(current + Number(b.dataset.step))));
+      box.querySelector("[data-close]").addEventListener("click", () => box.close());
+      // clicking the dark backdrop (the dialog itself, not its contents) closes it
+      box.addEventListener("click", (e) => { if (e.target === box) box.close(); });
+      document.addEventListener("keydown", (e) => {
+        if (!box.open) return;
+        if (e.key === "ArrowRight") show(current + 1);
+        if (e.key === "ArrowLeft") show(current - 1);
+      });
+    })();
+  </script>
+{% endif %}

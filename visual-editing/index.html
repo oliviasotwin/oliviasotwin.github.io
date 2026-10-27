@@ -1,12 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Graphic design!</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1 class="p-24">visual editing ooooooo</h1>
-</body>
-</html>
+---
+title: Visual editing
+hero_image: /images/title-cards/visual-editing.svg
+---
+<section class="mx-auto max-w-6xl px-6 py-24">
+  <h2 class="mb-10">Projects</h2>
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for i in (1..3) %}
+      <article class="overflow-hidden rounded-sm bg-white shadow-sm ring-1 ring-black/5">
+        <div class="aspect-[4/3] bg-neutral-200"></div>
+        <div class="p-5">
+          <h3>Project {{ i }}</h3>
+          <p class="mt-2 text-neutral-600">Placeholder description of this piece.</p>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>

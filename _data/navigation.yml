@@ -1,0 +1,11 @@
+# Edit this list to add, remove or reorder links in the nav bar
+- title: Home
+  url: /
+- title: Photo gallery
+  url: /photo-gallery/
+- title: Visual editing
+  url: /visual-editing/
+- title: About me
+  url: /about-me/
+- title: Contact
+  url: /contact/

@@ -1,0 +1,15 @@
+<!-- Title card: set hero_image (and optionally hero_full, hero_position) in a page's front matter -->
+{% if page.hero_image %}
+<section class="relative isolate flex items-end overflow-hidden {% if page.hero_full %}min-h-svh{% else %}min-h-[60vh]{% endif %}">
+  <img src="{{ page.hero_image | relative_url }}" alt=""
+       class="absolute inset-0 -z-10 h-full w-full object-cover"
+       style="object-position: {{ page.hero_position | default: 'center' }}">
+  <!-- light gradient: just enough to keep the nav and title readable on any photo -->
+  <div class="absolute inset-0 -z-10 bg-linear-to-t from-black/50 via-transparent to-black/30"></div>
+
+  <!-- title pinned to the bottom-left corner; clamp(min, preferred, max) scales it with screen width -->
+  <div class="w-full px-6 pt-32 pb-8 text-white md:px-10 md:pb-10">
+    <h1 class="leading-[0.9] tracking-tight {% if page.hero_full %}text-[clamp(4rem,14vw,12rem)]{% else %}text-[clamp(3.5rem,11vw,9rem)]{% endif %}">{{ page.heading | default: page.title }}</h1>
+  </div>
+</section>
+{% endif %}
