@@ -1,0 +1,41 @@
+# Builds the site the same way GitHub Pages normally does, plus one extra step that dates the
+# gallery photos by when they were uploaded (see scripts/set-photo-dates.sh).
+# Needs: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Build and deploy site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # adds a "Run workflow" button on the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history, so the script can see when each photo was added
+      - name: Date gallery photos by when they were uploaded
+        run: bash scripts/set-photo-dates.sh
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1   # GitHub's own Pages builder
+      - uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

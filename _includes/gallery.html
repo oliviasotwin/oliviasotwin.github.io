@@ -1,5 +1,6 @@
 {% comment %}
-  Justified gallery of everything in /images/gallery/ (newest name first).
+  Justified gallery of everything in /images/gallery/, newest upload first.
+  "Newest" = modified_time, which scripts/set-photo-dates.sh sets from the git history at build time.
   Usage: include gallery.html  — or pass limit=3 to show only the first few.
   How it works (flexbox + one CSS variable per photo):
     - --r is the photo's aspect ratio (width / height). Jekyll can't read image sizes on
@@ -14,7 +15,7 @@
       so a lone photo there doesn't get blown up to full width
 {% endcomment %}
 {% assign exts = ".jpg,.jpeg,.png,.webp,.gif" | split: "," %}
-{% assign photos = site.static_files | where_exp: "f", "f.path contains '/images/gallery/'" | sort: "name" | reverse %}
+{% assign photos = site.static_files | where_exp: "f", "f.path contains '/images/gallery/'" | sort: "modified_time" | reverse %}
 {% assign limit = include.limit | default: photos.size %}
 
 {% if photos.size == 0 %}
