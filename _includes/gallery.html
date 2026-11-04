@@ -1,5 +1,6 @@
 {% comment %}
-  Justified gallery of everything in /images/gallery/ (newest name first).
+  Justified gallery of everything in /images/gallery/, newest upload first.
+  "Newest" = modified_time, which scripts/set-photo-dates.sh sets from the git history at build time.
   Usage: include gallery.html  — or pass limit=3 to show only the first few.
   How it works (flexbox + one CSS variable per photo):
     - --r is the photo's aspect ratio (width / height). Jekyll can't read image sizes on
@@ -14,7 +15,7 @@
       so a lone photo there doesn't get blown up to full width
 {% endcomment %}
 {% assign exts = ".jpg,.jpeg,.png,.webp,.gif" | split: "," %}
-{% assign photos = site.static_files | where_exp: "f", "f.path contains '/images/gallery/'" | sort: "name" | reverse %}
+{% assign photos = site.static_files | where_exp: "f", "f.path contains '/images/gallery/'" | sort: "modified_time" | reverse %}
 {% assign limit = include.limit | default: photos.size %}
 
 {% if photos.size == 0 %}
@@ -40,7 +41,6 @@
   <dialog id="lightbox" class="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-black/90">
     <figure class="flex flex-col items-center">
       <img id="lightbox-img" alt="" class="max-h-[85vh] max-w-[92vw] object-contain shadow-2xl">
-      <figcaption id="lightbox-caption" class="mt-4 text-sm text-white/80"></figcaption>
     </figure>
     <button data-close class="fixed top-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-black/50 text-3xl text-white/80 hover:text-white" aria-label="Close">&times;</button>
     <button data-step="-1" class="fixed top-1/2 left-3 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-3xl text-white/80 hover:text-white" aria-label="Previous">&lsaquo;</button>
@@ -61,13 +61,12 @@
 
       const box = document.getElementById("lightbox");
       const img = document.getElementById("lightbox-img");
-      const cap = document.getElementById("lightbox-caption");
       let current = 0;
 
       const show = (i) => {
         current = (i + links.length) % links.length; // wrap around at either end
         img.src = links[current].href;
-        img.alt = cap.textContent = links[current].dataset.caption;
+        img.alt = links[current].dataset.caption;
       };
 
       links.forEach((link, i) => link.addEventListener("click", (e) => {
